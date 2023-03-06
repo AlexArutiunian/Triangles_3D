@@ -51,7 +51,9 @@ public:
     }
 
    
-};  
+}; 
+
+  
 
 template <typename T> class line{
 private:
@@ -61,37 +63,65 @@ private:
 
 
 public:
-    line(const std::vector<T> line_point1, const std::vector<T> line_point2){
+    line(const std::vector<T>& line_point1, const std::vector<T>& line_point2){
         lp1 = line_point1;
         lp2 = line_point2;
     }
  
-    bool line_up_point(const std::vector<T> lp1, const std::vector<T> lp2,
-    const std::vector<T> point, plane_3D<T> plane){
+    bool line_up_point(const std::vector<T>& point, plane_3D<T>& plane){
         T ax = this->lp1[0] - this->lp2[0];
-        T ay = lp1[1] - lp2[1];
-        T az = lp1[2] - lp2[2];
+        T ay = this->lp1[1] - this->lp2[1];
+        T az = this->lp1[2] - this->lp2[2];
 
         T C = (plane.get_normal())[2];
         T B = (plane.get_normal())[1];
         T A = (plane.get_normal())[0];
         T D = plane.get_d();
-
        
-       
-        T noname_ = ((az * C + ax * A) / (B * ax)) * point[0] - 
-        (lp1[0] * az * C - D * ax + lp1[2] * ax * C) / (B * ax);
 
-        noname_ = (ay / ax) * point[0] + lp1[1] - (ay / ax) * lp1[0];
- 
-        std::cout << noname_ << point[1] << std::endl;
-        std::cout << ax << std::endl;
-        
-        return (noname_ > point[1]);
-
+        if(ax != 0){
+            T noname_ = (ay / ax) * point[0] + lp1[1] - (ay / ax) * lp1[0];
+            std::cout << "y = " << (ay / ax) << " * x + " << lp1[1] << " - " << (ay / ax) << " * " << lp1[0] << std::endl;
+            return noname_ > point[1];
+        }
+            
+        else if(ay != 0){
+            T x = lp1[0];
+            std::cout << "x = " << x << std::endl;
+            return x > point[0];
     
+        }
+        
+
     }
 
 };
+
+template <typename T> struct triangle{
+    bool point_is_in_triangle(std::vector<T>& p1, std::vector<T>& p2, std::vector<T>& p3, std::vector<T>& point){
+
+        for(int i = 0; i != 2; ++i){
+            p2[i] -= p1[i];
+            p3[i] -= p1[i];
+            point[i] -= p1[i];
+        }
+
+        T m = (point[0] * p2[1] - point[1] * p2[0]) / (p3[0] * p2[1] - p3[1] * p2[0]);
+
+        if(m >= 0 && m <= 1){
+            T l = (point[0] - m * p3[0]) / p2[0];
+            if(l >= 0 && ((m + l) <= 1)) return true;
+        }
+
+        return false;
+       
+
+
+
+
+    }
+
+
+};  
      
 } // namespace end

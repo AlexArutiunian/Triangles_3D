@@ -31,17 +31,16 @@ int main(){
         norma2 += (norm2[i] * norm2[i]);
     }
 
-    if(abs(scalar_ / sqrt(norma1 * norma2)) == 1) std::cout << "the planes do not intersect\n";
-    else std::cout << "the planes intersect\n";
+    //if(abs(scalar_ / sqrt(norma1 * norma2)) == 1) std::cout << "the planes do not intersect\n";
+   // else std::cout << "the planes intersect\n";
 
     geom::line<T> line_(p2, p3);
 
-    std::vector<T> point = {3, 0.5, 0};
+    std::vector<T> point = {1, 0.5, 0};
 
-    plane.print_normal();
+    
 
-    std::cout << plane.get_d() << std::endl;
-
-    std::cout << line_.line_up_point(p2, p3, point, plane) << std::endl;
+    geom::triangle<T> tr;
+    if(tr.point_is_in_triangle(p1, p2, p3, point)) std::cout << "intersection point" << std::endl;
 
 }
