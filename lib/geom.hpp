@@ -23,10 +23,12 @@ public:
         matrix::math_matrix<T> m_c(2, {p2[0] - p1[0], p2[1] - p1[1], p3[0] - p2[0], p3[1] - p2[1]});
 
         
-        a = m_a.det();
-        b = -(m_b.det());
-        c = m_c.det();
-        d = - p1[1] * b - p1[0] * a - p1[2] * c;   
+        a = m_a.det_Gauss();
+        b = -(m_b.det_Gauss());
+        if(abs(b) == 0) b = 0;
+        c = m_c.det_Gauss();
+        d = - p1[1] * b - p1[0] * a - p1[2] * c;  
+        if(abs(d) == 0) d = 0; 
         norm = {a, b, c};
     } 
     plane_3D(const std::vector<std::vector<T>>& points){
@@ -34,15 +36,62 @@ public:
     }
 
     std::vector<T> get_normal(){
+        
+        return norm;
+    }
+
+    void print_normal(){
         std::cout << "{ ";
         for(auto i : norm) std::cout << i << " ";
         std::cout << "}\n";
-        return norm;
     }
     
     T get_d(){
         return d;
     }
+
+   
 };  
+
+template <typename T> class line{
+private:
+    std::vector<T> lp1;
+    std::vector<T> lp2;
+
+
+
+public:
+    line(const std::vector<T> line_point1, const std::vector<T> line_point2){
+        lp1 = line_point1;
+        lp2 = line_point2;
+    }
+ 
+    bool line_up_point(const std::vector<T> lp1, const std::vector<T> lp2,
+    const std::vector<T> point, plane_3D<T> plane){
+        T ax = this->lp1[0] - this->lp2[0];
+        T ay = lp1[1] - lp2[1];
+        T az = lp1[2] - lp2[2];
+
+        T C = (plane.get_normal())[2];
+        T B = (plane.get_normal())[1];
+        T A = (plane.get_normal())[0];
+        T D = plane.get_d();
+
+       
+       
+        T noname_ = ((az * C + ax * A) / (B * ax)) * point[0] - 
+        (lp1[0] * az * C - D * ax + lp1[2] * ax * C) / (B * ax);
+
+        noname_ = (ay / ax) * point[0] + lp1[1] - (ay / ax) * lp1[0];
+ 
+        std::cout << noname_ << point[1] << std::endl;
+        std::cout << ax << std::endl;
+        
+        return (noname_ > point[1]);
+
+    
+    }
+
+};
      
 } // namespace end

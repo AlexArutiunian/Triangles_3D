@@ -10,9 +10,9 @@ int main(){
     {{3, 5, 7}, {1, 2, 3}, {1, 0, 1},
     {4, 1, 2}, {3, 2, 1}, {0, 1, 1}};
 
-    std::vector<T> p1 = {3, 5, 7};
-    std::vector<T> p2 = {1, 2, 3};
-    std::vector<T> p3 = {1, 0, 1};
+    std::vector<T> p1 = {0, 0, 0};
+    std::vector<T> p2 = {2, 0, 0};
+    std::vector<T> p3 = {0, 2, 0};
     geom::plane_3D<T> plane(p1, p2, p3);
 
     std::vector<T> norm1 = plane.get_normal();
@@ -33,7 +33,15 @@ int main(){
 
     if(abs(scalar_ / sqrt(norma1 * norma2)) == 1) std::cout << "the planes do not intersect\n";
     else std::cout << "the planes intersect\n";
-    
-    
-    
+
+    geom::line<T> line_(p2, p3);
+
+    std::vector<T> point = {3, 0.5, 0};
+
+    plane.print_normal();
+
+    std::cout << plane.get_d() << std::endl;
+
+    std::cout << line_.line_up_point(p2, p3, point, plane) << std::endl;
+
 }
