@@ -36,9 +36,9 @@ int main(){
 
     geom::line<T> line_(p2, p3);
 
-    std::vector<T> point = {1, 0.5, 0};
+    std::vector<T> point = {1, 0.5, 1};
 
-    
+    // ADD CHECKING for different planes of point and triangles
 
     geom::triangle<T> tr;
     if(tr.point_is_in_triangle(p1, p2, p3, point)) std::cout << "intersection point" << std::endl;

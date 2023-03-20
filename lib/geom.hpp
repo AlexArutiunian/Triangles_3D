@@ -97,6 +97,8 @@ public:
 
 };
 
+// добавить ПРОВЕРКУ НА ТО ЧТО ТРЕУГОЛЬНИК И ТОЧКА В ОДНОЙ ПЛОСКОСТИ!!!!
+
 template <typename T> struct triangle{
     bool point_is_in_triangle(std::vector<T>& p1, std::vector<T>& p2, std::vector<T>& p3, std::vector<T>& point){
 
