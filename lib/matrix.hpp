@@ -5,8 +5,93 @@
 #include <math.h>
 #include <cassert>
 
+
 namespace matrix{
-template <typename T> class matrix_{
+
+template <typename T> void construct(T *p, T &rhs){
+    new (p) T(rhs);
+}
+
+template <typename T> void destroy(T *p) noexcept{
+    p->~T();
+}
+
+template <typename F> void destroy(F first, F last) noexcept {
+    // dctor impossible to make 
+    // non-dangerous for exception 
+    // and we do it noexcept 
+    while(first++ != last)
+        destroy(&*first);
+}
+
+// class for control
+// of raw memory
+
+template <typename T> struct matrix_buf{
+protected:
+    T *arr_;
+    size_t size_;
+    size_t used_ = 0;
+    // ban for copying 
+    matrix_buf(const matrix_buf &) = delete;  
+    // ban for copying assignment
+    matrix_buf &operator=(const matrix_buf &) = delete;
+
+    
+    matrix_buf (matrix_buf &&rhs) noexcept:
+    arr_(rhs.arr_), size_(rhs.size_), used_(rhs.used_){
+        rhs.arr = nullptr;
+        rhs.size_ = 0;
+        rhs.used_ = 0;
+    }  
+
+    // moving by just swap pointers
+    matrix_buf &operator=(matrix_buf &&rhs) noexcept{
+        std::swap(arr_, rhs.arr_);
+        std::swap(size_, rhs.size_);
+        std::swap(used_, rhs.used_);
+        return *this;
+    }
+
+  
+    // most interesting is constructor
+
+    matrix_buf(size_t sz = 0){
+        if(sz == 0){
+            arr_ = nullptr;
+        }
+        else{
+            try{
+                arr_ = static_cast<T*>(::operator new(sizeof(T) * sz));
+            }catch(std::bad_alloc){
+                std::cout << "Error with mem alloc\n";
+                throw;
+            }
+            
+        }
+        size_ = sz;
+       
+
+            // mem alloc 
+            // safety for exceptions
+            // if exceptions is
+            // object does not start existing
+      
+    }
+
+    ~matrix_buf(){
+        destroy(arr_, arr_ + used_);
+        ::operator delete(arr_);
+    }
+
+};
+
+// safety mem alloc
+// with class matrix_buf
+// if mem alloc - OK
+// is not exceptions
+
+template <typename T> class matrix_ : private matrix_buf<T>{
 private:
     size_t rows;     
     size_t columns; 
@@ -24,52 +109,95 @@ protected:
     }
 
 public:   
+
+    using matrix_buf<T>::used_;
+    using matrix_buf<T>::size_;
+    using matrix_buf<T>::arr_;
+
     // two constuctors for matrix size of NxM
+    
+    // safety ctor with using
+    // class matrix_buf
+    matrix_(size_t rs, size_t cs): matrix_buf<T>(rs * cs) {
+        p_matrix = arr_;
+        rows = rs;
+        columns = cs;
+        for(size_t i = 1; i != rows + 1; ++i){
+            for(size_t j = 1; j != columns + 1; ++j){
+                T temp = 0;
+                T &ref_t = temp;
+                construct(arr_ + used_, ref_t);
+                used_ += 1;   
+            }         
+        } 
+            if(rs == cs){
+                for(size_t i = 1; i != rs + 1; ++i){
+                    /*first way*/
 
-    matrix_(size_t rs, size_t cs): rows(rs), columns(cs){
-        p_matrix = new T[rs * cs];
-        if(rs == cs){
-            for(size_t i = 1; i != rs + 1; ++i){
-                /*first way*/
+                    //p_matrix[rs * i + i] = 1;
 
-                //p_matrix[rs * i + i] = 1;
+                    /*second way
+                    in which order of operations is important */
 
-                /*second way
-                in which order of operations is important */
-
-                (*(this))(i, i) = 1;
+                    (*(this))(i, i) = 1;
+                }
             }
+    }
+
+    matrix_(size_t rs, size_t cs, std::initializer_list<T> elems_matrix):
+    matrix_buf<T>(rs * cs) {
+        rows = rs;
+        columns = cs;
+        p_matrix = arr_;
+
+        for(auto elem : elems_matrix){
+            construct(arr_ + used_, elem);
+            used_ += 1;
         }
-    }     
-
-    matrix_(size_t rs, size_t cs, std::initializer_list<T> elems_matrix): rows(rs), columns(cs){
-        p_matrix = new T[cs * rs];
-
-        /*
-        // using more quick function copy (copying of 8 bites for one iteration)
-        // than for(...) (copying of 1 bites for one iteration)
-        */
-
-        std::copy(elems_matrix.begin(), elems_matrix.end(), p_matrix);
     }
 
     // two constuctors for matrix size of NxN (square_matrix)
     
-    matrix_(size_t size_m): rows(size_m), columns(size_m){
-        p_matrix = new T[size_m * size_m]; 
+    matrix_(size_t size_m): matrix_buf<T>(size_m * size_m){
+
+        rows = size_m;
+        columns = size_m;
+        p_matrix = arr_;
+      
+        for(size_t i = 1; i != rows + 1; ++i){
+            for(size_t j = 1; j != columns + 1; ++j){
+                T temp = 0;
+                T &ref_t = temp;
+                construct(arr_ + used_, ref_t);
+                used_ += 1;
+            }
+               
+        
+        } 
         for(size_t i = 1; i != rows + 1; ++i){
             (*(this))(i, i) = 1;
         }
+        
+        
     }
 
-    matrix_(size_t size_m, std::initializer_list<T> elems_matrix): rows(size_m), columns(size_m){
-        p_matrix = new T[size_m * size_m];
-        std::copy(elems_matrix.begin(), elems_matrix.end(), p_matrix);
+    matrix_(size_t size_m, std::initializer_list<T> elems_matrix):
+    matrix_buf<T>(size_m * size_m),
+    rows(size_m), columns(size_m){
+        p_matrix = arr_;
+        for(auto elem : elems_matrix){
+            construct(arr_ + used_, elem);
+            used_ += 1;
+        }   
     }
 
-    matrix_(size_t rs, size_t cs, T* elems_matrix): rows(rs), columns(cs){
-        p_matrix = new T[cs * rs];
-        std::copy(elems_matrix[0], elems_matrix[cs * rs - 1], p_matrix);
+    matrix_(size_t rs, size_t cs, T* elems_matrix): matrix_buf<T>(rs * cs),
+    rows(rs), columns(cs){
+        p_matrix = arr_;
+        for(size_t i = 0; i != rs * cs; ++i){
+            construct(arr_ + used_, elems_matrix[i]);
+            used_ += 1;
+        }  
     }
     
     
@@ -77,35 +205,38 @@ public:
     // the Rule of five
     */
    
-    matrix_(const matrix_& other_matrix): rows(other_matrix.rows), columns(other_matrix.columns){
-        p_matrix = new T[other_matrix.columns * other_matrix.rows];
-        std::copy_n(other_matrix.p_matrix, columns * rows, p_matrix);
+    matrix_(const matrix_& other_matrix): matrix_buf<T>(other_matrix.used_){
+        rows = other_matrix.rows;
+        columns = other_matrix.columns;
+        p_matrix = other_matrix.arr_;
+        while (used_ < other_matrix.used_) {
+            construct(arr_ + used_, other_matrix.arr_[used_]);
+            used_ += 1;
+        }
     }
     
-    matrix_(matrix_&& other_matrix): p_matrix(nullptr), rows(0), columns(0){ 
+    matrix_(matrix_&& other_matrix) noexcept: p_matrix(nullptr), rows(0), columns(0) { 
         swap(other_matrix);
     }
 
 
-    matrix_& operator= (matrix_& other_m){
+    matrix_& operator= (matrix_& other_m) noexcept{
         matrix_ copy_(other_m);
         swap(copy_);
         return *this;
     }
 
-    matrix_& operator= (matrix_&& other_m){
+    matrix_& operator= (matrix_&& other_m) noexcept{
         swap(other_m);
         return *this;
     }
    
-    ~matrix_(){
-        delete[] p_matrix; 
-    }
+   
 
 
 protected:     
      
-    void swap(matrix_& m){
+    void swap(matrix_& m) noexcept{
         std::swap(p_matrix, m.p_matrix);
         std::swap(columns, m.columns);
         std::swap(rows, m.rows);
@@ -118,11 +249,11 @@ public:
     }
 
     matrix_& operator= (std::initializer_list<T> elems_matrix){
-
-        assert(elems_matrix.size() == columns * rows);
-        p_matrix = new T[elems_matrix.size()];
-        
+        if(rows * columns != elems_matrix.size()){
+            throw std::runtime_error("Bad initializing");
+        } 
         std::copy(elems_matrix.begin(), elems_matrix.end(), p_matrix);
+
         return *this;
     }
 
@@ -158,6 +289,8 @@ public:
             if(i % columns == 0) os << '\n';   
         }
     }
+
+    
 };   
 
 /*
@@ -253,6 +386,9 @@ public:
     math_matrix(size_t rs, std::initializer_list<T> elems_matrix):
     base_::matrix_(rs, elems_matrix) {}
 
+    math_matrix(size_t rs, size_t cs, T* elems_matrix):
+    base_::matrix_(rs, cs, elems_matrix) {}
+
     math_matrix& operator=(std::initializer_list<T> elems_matrix){
         base_::operator=(elems_matrix);
         return *this;
@@ -273,7 +409,7 @@ public:
         return *this;
     }
 
-    virtual ~math_matrix(){}
+    
  
     /*
     // method for elementary transformations 1st type
@@ -294,12 +430,7 @@ public:
         size_t cs = base_::get_columns();
         size_t rs = base_::get_rows();
         T* p_m = base_::get_elems();
-        try{
-            check_row(n, n);
-            
-        }catch(...){
-            message_one_row(n);
-        }
+        check_row(n, n);
         for(int i = 0; i != cs; ++i){
             p_m[cs * n + i] *= a;  
         }
@@ -318,12 +449,8 @@ public:
         size_t cs = base_::get_columns();
         size_t rs = base_::get_rows();
         T* p_m = base_::get_elems();
-        try{
-            check_row(n1, n2);
-            
-        }catch(...){
-            message_row_none(n1, n2);
-        }
+        
+        check_row(n1, n2); 
 
         for(int i = 0; i != static_cast<int>(cs); ++i){
             p_m[cs * n1 + i] += a * p_m[cs * n2 + i];
@@ -345,11 +472,8 @@ public:
         n1 -= 1;
         n2 -= 1;
 
-        try{
-            check_row(n1, n2);     
-        }catch(...){
-            message_row_none(n1, n2);
-        }
+        
+        check_row(n1, n2);     
         
         for(int i = 0; i != static_cast<int>(cs); ++i){
             temp = p_m[cs * n1 + i];
@@ -370,11 +494,9 @@ public:
         n1 -= 1;
         n2 -= 1;
         
-        try{
-            check_col(n1, n2);  
-        }catch(...){
-            message_col_none(n1, n2);
-        }
+        
+        check_col(n1, n2);  
+        
      
         for(int i = 0; i != static_cast<int>(rs); ++i){
             temp = p_m[cs * i + n1];
@@ -420,11 +542,9 @@ public:
 
     int find_max_in_row(int i){
 
-        try{
-            check_row(i, i);       
-        }catch(...){
-            message_one_row(i);
-        }
+       
+        check_row(i, i);       
+        
 
         size_t cs = base_::get_columns();
         size_t rs = base_::get_rows();
@@ -483,22 +603,30 @@ public:
     }
 
     T det_Gauss(T EPS){
-
         size_t cs = base_::get_columns();
         size_t rs = base_::get_rows();
-        T* p_m = base_::get_elems();
 
-        int per = this->triang_form_Gauss_max(EPS);
+        if (rs != cs) {
+            throw std::invalid_argument("Matrix must be square");
+        }
+
+        T* p_m = base_::get_elems();
+        math_matrix<T> m_copy(cs, rs);
+
+
+        m_copy = *this;
+
+        int per = m_copy.triang_form_Gauss_max(EPS);
         T det = 0;
         if(cs != rs){
             std::cout << "It is not square matrix. I can not solve determinant" << std::endl;
             return 0;
         }    
         if(cs == rs){
-            if(p_m[cs * rs - 1] != 0){
-                det = p_m[0];
+            if(m_copy(cs, cs) != 0){
+                det = m_copy(1, 1);
                 for(int i = 1; i != static_cast<int>(cs); ++i)
-                    det *= p_m[(cs + 1) * i];
+                    det *= m_copy(i + 1, i + 1);
             }  
             else return 0;
         }
@@ -506,20 +634,21 @@ public:
         
         if(abs(det) == 0) return 0;
 
-        if((per != 0) && (det != 0)){
+        if(per != 0){
             for(int i = 0; i != per; ++i){
                 det *= (-1);
             }
-        
         }
        
         return det;
     }    
     T det_Gauss(){
 
-        T EPS = 0.00000001;
+        T EPS = 0.000000000001;
         return det_Gauss(EPS);
     } 
+
+    
 }; 
 
 } // namespace matrix
