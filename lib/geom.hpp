@@ -11,7 +11,7 @@ private:
     T z;
 
 public:
-    point(const T& x; const T& y; const T&z): x(x), y(y), z(z) {};
+    point(const T& x, const T& y, const T& z): x(x), y(y), z(z) {};
     ~point(){};
 };
 
