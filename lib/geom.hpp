@@ -109,11 +109,12 @@ public:
     bool is_intersect_segment(const line_segment<T>& rhs_segment){
         vector<T> point__1 = rhs_segment.point1;
         vector<T> point__2 = rhs_segment.point2;
-
+      
         vector<T> v1_1 = point__1 - point1;
         vector<T> v2_1 = point__1 - point2;
 
         vector<T> v1_2 = point__2 - this->point1;
+        
         vector<T> v2_2 = point__2 - this->point2;
 
         vector<T> check1 = v1_1;
@@ -121,7 +122,7 @@ public:
         vector<T> check2 = v1_2;
         check2.vect_mult(v2_2);
         
-        if(check1 * check2 <= 0){
+        if(check1 * check2 < 0){
             // in this case
             // we need to check 
             // projection on one of a segment
@@ -201,7 +202,7 @@ public:
 
         for(int i = 0; i != 3; ++i){
             for(int j = 0; j != 3; ++j){
-                if(sides_tr1[i].is_intersect_segment(sides_tr2[j])){
+                if(sides_tr1[i].is_intersect_segment(sides_tr2[j])){ 
                     std::cout << "YES\n";
                     return true;
                 }    

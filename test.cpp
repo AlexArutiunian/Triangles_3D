@@ -22,16 +22,16 @@ int main(){
     v.vect_mult(v2);
 
 
-    geom::line_segment<T> segment({0, 1, 0}, {1, 3, 0});
+    geom::line_segment<T> segment({1, 1, 0}, {0, 0, 0});
 
-    geom::line_segment<T> segment2({1, 0, 0}, {0, 2, 0});
+    geom::line_segment<T> segment2({2, 2, 0}, {2, 0, 0});
 
     std::cout << segment.is_intersect_segment(segment2) << std::endl;
 
 
     geom::triangle<T> tr({1, 0, 0}, {-1, 0, 0}, {0, 2, 0});
 
-    geom::triangle<T> tr2({0, 1, 0}, {2, 1, 0}, {1, 3, 0});
+    geom::triangle<T> tr2({0, 0, 0}, {1, 2, 0}, {2, 0, 0});
 
     std::cout << tr.is_intersect_triangles(tr2);
 
