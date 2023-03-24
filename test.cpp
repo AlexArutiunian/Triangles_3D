@@ -17,17 +17,24 @@ int main(){
 
     geom::vector<T> v2 = v;
 
-    std::cout << v * v2 << std::endl;
+
 
     v.vect_mult(v2);
 
-    std::cout << v * v2 << std::endl;
 
-    geom::line_segment<T> segment({2, 2, 0}, {0, 0, 0});
+    geom::line_segment<T> segment({0, 1, 0}, {1, 3, 0});
 
-    geom::line_segment<T> segment2({3, 1, 0}, {3, 6, 0});
+    geom::line_segment<T> segment2({1, 0, 0}, {0, 2, 0});
 
-    std::cout << segment.is_intersect_segment(segment2);
+    std::cout << segment.is_intersect_segment(segment2) << std::endl;
+
+
+    geom::triangle<T> tr({1, 0, 0}, {-1, 0, 0}, {0, 2, 0});
+
+    geom::triangle<T> tr2({0, 1, 0}, {2, 1, 0}, {1, 3, 0});
+
+    std::cout << tr.is_intersect_triangles(tr2);
+
 
 
 
