@@ -34,13 +34,16 @@ public:
         return z;
     }
     
-    vector<T>& operator-(const vector<T>& rhs){
+    vector<T>& operator-=(const vector<T>& rhs){
         x -= rhs.x;
         y -= rhs.y;
         z -= rhs.z;
 
         return *this;
     }
+
+    
+    
      
     vector<T>& operator=(T* array){
         x = array[0];
@@ -74,6 +77,14 @@ public:
     ~vector(){}
 };
 
+template <typename T>
+vector<T> operator-(const vector<T>& vect1, const vector<T>& vect2){
+    vector<T> temp = vect1;
+    temp -= vect1;
+    return temp;
+}
+
+
 template <typename T> class line_segment{
 private:
     vector<T> point1;
@@ -82,6 +93,14 @@ public:
     line_segment(const vector<T>& p1, const vector<T>& p2):
     point1(p1), point2(p2){
         
+    }
+
+    const vector<T> get_point1(){
+        return point1;
+    }
+
+    const vector<T> get_point2(){
+        return point2;
     }
 
     line_segment(const T* p1, const T* p2){
@@ -121,6 +140,12 @@ public:
         check1.vect_mult(v2_1);
         vector<T> check2 = v1_2;
         check2.vect_mult(v2_2);
+
+        if((check1 * check2) == 0){
+           
+            if(is_in_interval(point__1, point1, point2) || is_in_interval(point__2, point1, point2)) return true;
+            else return false;
+        }
         
         if(check1 * check2 < 0){
             // in this case
@@ -187,6 +212,22 @@ private:
 public:    
     triangle(const vector<T> vert1, const vector<T> vert2, const vector<T> vert3):
     vert1(vert1), vert2(vert2), vert3(vert3){}
+
+    triangle<T>& operator=(const triangle<T>& rhs){
+        this->vert1 = rhs.vert1;
+        this->vert2 = rhs.vert2;
+        this->vert3 = rhs.vert3;
+
+        return *this;
+    }
+
+    triangle<T>& operator=(const vector<T>* rhs){
+        this->vert1 = rhs[0];
+        this->vert2 = rhs[1];
+        this->vert3 = rhs[2];
+
+        return *this;
+    }
     
     bool is_intersect_triangles(const triangle<T>& tr_rhs){
         line_segment<T> side_11(vert1, vert2);
@@ -203,7 +244,7 @@ public:
         for(int i = 0; i != 3; ++i){
             for(int j = 0; j != 3; ++j){
                 if(sides_tr1[i].is_intersect_segment(sides_tr2[j])){ 
-                    std::cout << "YES\n";
+                    
                     return true;
                 }    
                   

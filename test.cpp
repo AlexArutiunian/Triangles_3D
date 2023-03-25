@@ -5,37 +5,33 @@
 using T = double;
 
 int main(){
-    int n = 4;
- 
-
-    std::vector<T> p1 = {2, 0, 0};
-    std::vector<T> p2 = {-1, 0, 0};
-    std::vector<T> p3 = {0, 0, 1};
     
-     
-    geom::vector<T> v(1.0, 2.0, 1.0);
 
-    geom::vector<T> v2 = v;
-
-
-
-    v.vect_mult(v2);
-
-
-    geom::line_segment<T> segment({1, 1, 0}, {0, 0, 0});
-
-    geom::line_segment<T> segment2({2, 2, 0}, {2, 0, 0});
-
-    std::cout << segment.is_intersect_segment(segment2) << std::endl;
-
-
-    geom::triangle<T> tr({1, 0, 0}, {-1, 0, 0}, {0, 2, 0});
+    geom::triangle<T> tr1({1, 0, 0}, {-1, 0, 0}, {0, 2, 0});
 
     geom::triangle<T> tr2({0, 0, 0}, {1, 2, 0}, {2, 0, 0});
 
-    std::cout << tr.is_intersect_triangles(tr2);
+    std::cout << std::boolalpha << tr1.is_intersect_triangles(tr2) << std::endl;
 
+    tr1 = {{1, 0, 0}, {-1, 0, 0}, {0, 2, 0}};
+    tr2 = {{5, 0, 0}, {4, 2, 0}, {3, 0, 0}};
 
+    std::cout << std::boolalpha << tr1.is_intersect_triangles(tr2) << std::endl;
+
+    tr1 = {{1, 0, 0}, {-1, 0, 0}, {0, 2, 0}};
+    tr2 = {{-1, 0, 0}, {-2, 2, 0}, {-3, 0, 0}};
+
+    std::cout << std::boolalpha << tr1.is_intersect_triangles(tr2) << std::endl;
+
+    tr1 = {{1, 0, 0}, {-1, 0, 0}, {0, 2, 0}};
+    tr2 = {{2, 3, 0}, {0, 5, 0}, {1, 6, 0}};
+
+    std::cout << std::boolalpha << tr1.is_intersect_triangles(tr2) << std::endl;
+
+    tr1 = {{1, 0, 0}, {-1, 0, 0}, {0, 2, 0}};
+    tr2 = {{0, 1, 0}, {-2, 4, 0}, {-1, 5, 0}};
+
+    std::cout << std::boolalpha << tr1.is_intersect_triangles(tr2) << std::endl;
 
 
 }
