@@ -80,7 +80,7 @@ public:
 template <typename T>
 vector<T> operator-(const vector<T>& vect1, const vector<T>& vect2){
     vector<T> temp = vect1;
-    temp -= vect1;
+    temp -= vect2;
     return temp;
 }
 
@@ -129,7 +129,8 @@ public:
         vector<T> point__1 = rhs_segment.point1;
         vector<T> point__2 = rhs_segment.point2;
       
-        vector<T> v1_1 = point__1 - point1;
+        vector<T> v1_1(point__1);
+        v1_1 = point__1 - point1;
         vector<T> v2_1 = point__1 - point2;
 
         vector<T> v1_2 = point__2 - this->point1;
@@ -228,8 +229,48 @@ public:
 
         return *this;
     }
+
+    vector<T>& get_v1(){
+        return vert1;
+    }
+
+    vector<T>& get_v2(){
+        return vert2;
+    }
+
+    vector<T>& get_v3(){
+        return vert3;
+    }
+
+    bool is_point_in_triangle(const vector<T>& point_){
+        vector<T> p1 = vert1;
+        vector<T> p2 = vert2;
+        vector<T> p3 = vert3;
+
+        vector<T> point = point_;
+
+        p2 -= p1;
+        p3 -= p1;
+        point -= p1;
+       
+
+        T m = (point.get_x() * p2.get_y() - point.get_y() * p2.get_x()) / (p3.get_x() * p2.get_y() - p3.get_y() * p2.get_x());
+
+        if(m >= 0 && m <= 1){
+            T l = (point.get_x() - m * p3.get_x()) / p2.get_x();
+            if(l >= 0 && ((m + l) <= 1)) return true;
+        }
+
+        return false;
+       
+
+
+
+
+    }
     
-    bool is_intersect_triangles(const triangle<T>& tr_rhs){
+    bool is_intersect_triangles(const triangle<T>& tr_2){
+        triangle<T> tr_rhs = tr_2;
         line_segment<T> side_11(vert1, vert2);
         line_segment<T> side_12(vert2, vert3);
         line_segment<T> side_13(vert1, vert3);
@@ -251,6 +292,18 @@ public:
             }
 
         }
+
+       
+        if(is_point_in_triangle(tr_rhs.vert1) || is_point_in_triangle(tr_rhs.vert2) || is_point_in_triangle(tr_rhs.vert3)){
+            return true;
+        }
+
+        
+
+        else if(tr_rhs.is_point_in_triangle(vert1) || tr_rhs.is_point_in_triangle(vert2) || tr_rhs.is_point_in_triangle(vert3)){
+            return true;
+        }
+    
         return false;
         
         
