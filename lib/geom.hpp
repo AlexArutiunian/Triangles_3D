@@ -147,35 +147,36 @@ public:
             if(is_in_interval(point__1, point1, point2) || is_in_interval(point__2, point1, point2)) return true;
             else return false;
         }
+
+        
         
         if(check1 * check2 < 0){
             // in this case
             // we need to check 
-            // projection on one of a segment
-            vector<T> direct_v = point1 - point2;
-            T free_part1 = direct_v.get_x() * point1.get_y() - direct_v.get_y() * point1.get_x();
-            T free_part2 = direct_v.get_y() * point2.get_y() - direct_v.get_x() * point2.get_x();
+            // is point of intersect
+            // lines in interval of 
+            // one of the segment
+            vector<T> direct1 = point1 - point2;
+            vector<T> direct2 = point__1 - point__2;
             
-            T summ_quad = direct_v.get_x() * direct_v.get_x() + direct_v.get_y() * direct_v.get_y();
+            if(direct1.get_y() * direct2.get_x() - direct2.get_y() * direct1.get_x() == 0){
+                // case when lines is ||
+                return false;
+            }
 
-            vector<T> is_in_segment1((free_part2 * direct_v.get_x() - free_part1 * direct_v.get_y()) / summ_quad,
-            (free_part1 * direct_v.get_x() + free_part2 * direct_v.get_y()) / summ_quad, 0);
+            T x = (direct2.get_x() * direct1.get_x() * point__2.get_y()
+            - direct1.get_x() * direct2.get_x() * point1.get_y() + 
+            direct1.get_y() * direct2.get_x() * point1.get_x() -
+            direct2.get_y() * direct1.get_x() * point__2.get_x()) / 
+            (direct1.get_y() * direct2.get_x() - direct2.get_y() * direct1.get_x());
 
-            vector<T> point__1 = rhs_segment.point1;
-            vector<T> point__2 = rhs_segment.point2;
+            T y = (direct2.get_y() * direct1.get_y() * (point__2.get_x() - point1.get_x()) +
+            direct2.get_y() * direct1.get_x() * point1.get_y() - direct2.get_x() * direct1.get_y() * point__2.get_y()) /
+            (direct2.get_y() * direct1.get_x() - direct2.get_x() * direct1.get_y());
 
-            direct_v = point__1 - point__2;
+            vector<T> is_in_segment1(x, y, 0);
 
-            free_part1 = direct_v.get_x() * point__1.get_y() - direct_v.get_y() * point__1.get_x();
-            free_part2 = direct_v.get_y() * point__2.get_y() - direct_v.get_x() * point__2.get_x();
-            
-            summ_quad = direct_v.get_x() * direct_v.get_x() + direct_v.get_y() * direct_v.get_y();
-
-            vector<T> is_in_segment2((free_part2 * direct_v.get_x() - free_part1 * direct_v.get_y()) / summ_quad,
-            (free_part1 * direct_v.get_x() + free_part2 * direct_v.get_y()) / summ_quad, 0);
-          
-            if(is_in_interval(is_in_segment1, point1, point2) || 
-            is_in_interval(is_in_segment2, point__1, point__2)){
+            if(is_in_interval(is_in_segment1, point1, point2)){
                 return true;
             }
             else return false;
@@ -252,7 +253,6 @@ public:
         p2 -= p1;
         p3 -= p1;
         point -= p1;
-       
 
         T m = (point.get_x() * p2.get_y() - point.get_y() * p2.get_x()) / (p3.get_x() * p2.get_y() - p3.get_y() * p2.get_x());
 
@@ -262,10 +262,6 @@ public:
         }
 
         return false;
-       
-
-
-
 
     }
     
