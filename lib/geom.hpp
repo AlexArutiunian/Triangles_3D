@@ -6,14 +6,14 @@
 
 namespace geom{
 
-template <typename T> class vector{
+template <class T> class vector{
 private:
     T x;
     T y;
     T z;
    
 public:
-    
+    vector = default;
 
     vector(const T& x, const T& y, const T& z): x(x), y(y), z(z){}
     
@@ -42,8 +42,11 @@ public:
         return *this;
     }
 
-    
-    
+    vector<T>& operator +=(const vector<T>& rhs){
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+    }
      
     vector<T>& operator=(T* array){
         x = array[0];
@@ -53,39 +56,40 @@ public:
 
     }
 
-    T operator*(const vector<T>& rhs){
-        
+    T operator * (const vector<T>& rhs){
         return x * rhs.x + y * rhs.y + z * rhs.z;
     }
 
-    
-
-    vector<T>& vect_mult(const vector<T>& rhs){
-        
-        T temp_x = y * rhs.z - z * rhs.y;
-        T temp_y = -x * rhs.z + z * rhs.x;
+    vector<T> vector_mul(const vector<T>& rhs){//Странное возвращение менять this and return: 
+        T temp_x = y * rhs.z - z * rhs.y;      //Решил, что удобнее будет просто возвращать изменненный вектор
+        T temp_y = z * rhs.x - x * rhs.z ;
         T temp_z = x * rhs.y - y * rhs.x;
 
-        x = temp_x;
-        y = temp_y;
-        z = temp_z;
+        vector<T> temp(temp_x, temp_y, temp_z);
 
-        return *this;
-   
+        return temp;
     }
-    
+
     ~vector(){}
 };
 
-template <typename T>
+template <class T>
 vector<T> operator-(const vector<T>& vect1, const vector<T>& vect2){
     vector<T> temp = vect1;
     temp -= vect2;
     return temp;
 }
 
+template <class T>
+vector<T> operator+(const vector<T>& vect1, const vector<T>& vect2){
+    vector<T> temp = vect1;
+    temp += vect2;
+    return temp;
+}
 
-template <typename T> class line_segment{
+
+//Line Segment?
+template <class T> class line_segment{
 private:
     vector<T> point1;
     vector<T> point2;
@@ -147,36 +151,35 @@ public:
             if(is_in_interval(point__1, point1, point2) || is_in_interval(point__2, point1, point2)) return true;
             else return false;
         }
-
-        
         
         if(check1 * check2 < 0){
             // in this case
             // we need to check 
-            // is point of intersect
-            // lines in interval of 
-            // one of the segment
-            vector<T> direct1 = point1 - point2;
-            vector<T> direct2 = point__1 - point__2;
+            // projection on one of a segment
+            vector<T> direct_v = point1 - point2;
+            T free_part1 = direct_v.get_x() * point1.get_y() - direct_v.get_y() * point1.get_x();
+            T free_part2 = direct_v.get_y() * point2.get_y() - direct_v.get_x() * point2.get_x();
             
-            if(direct1.get_y() * direct2.get_x() - direct2.get_y() * direct1.get_x() == 0){
-                // case when lines is ||
-                return false;
-            }
+            T summ_quad = direct_v.get_x() * direct_v.get_x() + direct_v.get_y() * direct_v.get_y();
 
-            T x = (direct2.get_x() * direct1.get_x() * point__2.get_y()
-            - direct1.get_x() * direct2.get_x() * point1.get_y() + 
-            direct1.get_y() * direct2.get_x() * point1.get_x() -
-            direct2.get_y() * direct1.get_x() * point__2.get_x()) / 
-            (direct1.get_y() * direct2.get_x() - direct2.get_y() * direct1.get_x());
+            vector<T> is_in_segment1((free_part2 * direct_v.get_x() - free_part1 * direct_v.get_y()) / summ_quad,
+            (free_part1 * direct_v.get_x() + free_part2 * direct_v.get_y()) / summ_quad, 0);
 
-            T y = (direct2.get_y() * direct1.get_y() * (point__2.get_x() - point1.get_x()) +
-            direct2.get_y() * direct1.get_x() * point1.get_y() - direct2.get_x() * direct1.get_y() * point__2.get_y()) /
-            (direct2.get_y() * direct1.get_x() - direct2.get_x() * direct1.get_y());
+            vector<T> point__1 = rhs_segment.point1;
+            vector<T> point__2 = rhs_segment.point2;
 
-            vector<T> is_in_segment1(x, y, 0);
+            direct_v = point__1 - point__2;
 
-            if(is_in_interval(is_in_segment1, point1, point2)){
+            free_part1 = direct_v.get_x() * point__1.get_y() - direct_v.get_y() * point__1.get_x();
+            free_part2 = direct_v.get_y() * point__2.get_y() - direct_v.get_x() * point__2.get_x();
+            
+            summ_quad = direct_v.get_x() * direct_v.get_x() + direct_v.get_y() * direct_v.get_y();
+
+            vector<T> is_in_segment2((free_part2 * direct_v.get_x() - free_part1 * direct_v.get_y()) / summ_quad,
+            (free_part1 * direct_v.get_x() + free_part2 * direct_v.get_y()) / summ_quad, 0);
+          
+            if(is_in_interval(is_in_segment1, point1, point2) || 
+            is_in_interval(is_in_segment2, point__1, point__2)){
                 return true;
             }
             else return false;
@@ -195,7 +198,7 @@ public:
 };
 
 
-template <typename T>
+template <class T>
 bool is_in_interval(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
     if(((is_in_segment1.get_x() >= point1.get_x() && is_in_segment1.get_x() <= point2.get_x()
         && is_in_segment1.get_y() >= point1.get_y() && is_in_segment1.get_y() <= point2.get_y()) ||
@@ -205,13 +208,13 @@ bool is_in_interval(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& poi
     return false;    
 }
 
-template <typename T> class triangle{
+//TRIANGLE
+template <class T> class triangle{
 private:
     vector<T> vert1;
     vector<T> vert2;
     vector<T> vert3;
-
-public:    
+public:  
     triangle(const vector<T> vert1, const vector<T> vert2, const vector<T> vert3):
     vert1(vert1), vert2(vert2), vert3(vert3){}
 
@@ -253,6 +256,7 @@ public:
         p2 -= p1;
         p3 -= p1;
         point -= p1;
+       
 
         T m = (point.get_x() * p2.get_y() - point.get_y() * p2.get_x()) / (p3.get_x() * p2.get_y() - p3.get_y() * p2.get_x());
 
@@ -262,7 +266,6 @@ public:
         }
 
         return false;
-
     }
     
     bool is_intersect_triangles(const triangle<T>& tr_2){
@@ -284,9 +287,7 @@ public:
                     
                     return true;
                 }    
-                  
             }
-
         }
 
        
@@ -294,19 +295,86 @@ public:
             return true;
         }
 
-        
-
         else if(tr_rhs.is_point_in_triangle(vert1) || tr_rhs.is_point_in_triangle(vert2) || tr_rhs.is_point_in_triangle(vert3)){
             return true;
         }
     
         return false;
-        
-        
     }
     
+    bool tree_perpendiculars(triangle &A);
+    vector<T> triangle<T>::value_for_equa(vector<T>& guid_vec, vector<T>& dis);
+    vector<T> triangle<T>::search_distance(vector<T>& normal, const T d);
+    vector<T> normal();
     ~triangle(){}
 };
-
-     
 } // namespace end
+
+// This is part for Triangle3D
+
+template <class T>
+geom::vector<T> geom::triangle<T>::normal(){
+    vector<T> normal = (vert2-vert1).vector_mul(vert3 - vert1);//N = (V2-V1) x (V3-V1)
+    return normal;
+}
+
+template <class T>
+bool geom::triangle<T>::tree_perpendiculars(triangle<T> &A){
+
+    vector<T> normal_2 = A.normal();                     //Vector N2
+    T d_2 = -1 * (normal_2 * A.vert1);                   //d_V2 = -1 * (N2 * V2_1)    
+    vector<T> d_1 = this->search_distance(normal_2, d_2);// Далее создается полная абстракция для упрощения работы используется класс вектор 
+
+    if((d_1.x * d_1.y > 0) && (d_1.y * d_1.z > 0)){
+        return false;
+    }
+
+    vector<T> normal_1 = this->normal();
+    T d_1 = -1 * (normal_1 * this->vert1);
+    vector<T> d_2 = A.search_distance(normal_1, d_1);
+
+    vector<T> guid_vec = normal_1.vector_mul(normal_2);  //D = N1 x N2
+
+    vector<T> t_1 = this->value_for_equa(guid_vec, d_1);
+    vector<T> t_2 = A.value_for_equa(guid_vec, d_2);
+
+    if((t_1.x < t_2.x && t_2.x < t_1.y) || (t_1.x < t_2.y && t_2.y < t_1.y)){
+        return true;
+    }
+    
+    return false;
+}
+
+template <class T>
+geom::vector<T> geom::triangle<T>::search_distance(vector<T>& normal, const T dis){
+    vector<T> d;
+    d.x = normal_2 * this->vert1 + dis;             //d_V1_i = N2*V1_i + d_V2
+    d.y = normal_2 * this->vert2 + dis; 
+    d.z = normal_2 * this->vert3 + dis;
+
+    return d; 
+}
+
+template <class T>
+geom::vector<T> geom::triangle<T>::value_for_equa(vector<T>& guid_vec, vector<T>& dis){
+    p_1 = guid_vec * this->vert1;
+    p_2 = guid_vec * this->vert2;
+    p_3 = guid_vec * this->vert3;
+
+    if(dis.x * dis.z > 0){
+        t1 = p_1 + (p_2 - p_1)*(dis.x)/(dis.x - dis.y);
+        t2 = p_3 + (p_2 - p_3)*(dis.z)/(dis.z - dis.y);
+    }
+    if(dis.y * dis.z > 0){
+        t1 = p_2 + (p_1 - p_2)*(dis.y)/(dis.y - dis.x);
+        t2 = p_3 + (p_1 - p_3)*(dis.z)/(dis.z - dis.x);
+    }
+    if(dis.x * dis.y > 0){
+        t1 = p_1 + (p_3 - p_1)*(dis.x)/(dis.x - dis.z);
+        t2 = p_2 + (p_3 - p_2)*(dis.y)/(dis.z - dis.z);
+    }
+
+    vector<t> t(t1, t2, NAN);
+    return t;
+}
+
