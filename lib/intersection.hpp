@@ -5,7 +5,7 @@
 namespace geom{
 
 template <typename T>
-bool is_point_in_interval(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
+bool is_point_in_segment(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
     if((is_in_segment1 - point1) * (is_in_segment1 - point2) <= 0)
         return true;
     return false;    
@@ -34,7 +34,10 @@ bool is_intersect_segment(const line_segment<T>& segment1, const line_segment<T>
 
     if((check1 * check2) == 0){
         
-        if(is_point_in_interval(point__1, point1, point2) || is_point_in_interval(point__2, point1, point2)) return true;
+        if(is_point_in_segment(point__1, point1, point2) || 
+        is_point_in_segment(point__2, point1, point2) || 
+        is_point_in_segment(point1, point__1, point__2) ||
+        is_point_in_segment(point2, point__1, point__2)) return true;
         else return false;
     }
     
@@ -66,8 +69,8 @@ bool is_intersect_segment(const line_segment<T>& segment1, const line_segment<T>
 
        
 
-        if(is_point_in_interval(is_in_segment1, point1, point2) 
-        && is_point_in_interval(is_in_segment1, point__1, point__2)){
+        if(is_point_in_segment(is_in_segment1, point1, point2) 
+        && is_point_in_segment(is_in_segment1, point__1, point__2)){
             return true;
         }
         else return false;
@@ -83,7 +86,7 @@ bool is_intersect_segment(const line_segment<T>& segment1, const line_segment<T>
 }
 
 template <typename T>
-bool is_point_in_triangle(const vector<T>& point_, const triangle<T>& triang){
+bool is_point_in_triangle_2D(const vector<T>& point_, const triangle<T>& triang){
     vector<T> p1 = triang.get_v1();
     vector<T> p2 = triang.get_v2();
     vector<T> p3 = triang.get_v3();
@@ -107,7 +110,7 @@ bool is_point_in_triangle(const vector<T>& point_, const triangle<T>& triang){
 
 
 template <typename T>
-bool is_intersect_triangles(const triangle<T>& tr_1, const triangle<T>& tr_2){
+bool is_intersect_triangles_2D(const triangle<T>& tr_1, const triangle<T>& tr_2){
    
     line_segment<T> side_11(tr_1.get_v1(), tr_1.get_v2());
     line_segment<T> side_12(tr_1.get_v2(), tr_1.get_v3());
@@ -132,17 +135,17 @@ bool is_intersect_triangles(const triangle<T>& tr_1, const triangle<T>& tr_2){
     }
 
     
-    if(is_point_in_triangle(tr_2.get_v1(), tr_1) 
-    || is_point_in_triangle(tr_2.get_v2(), tr_1) 
-    || is_point_in_triangle(tr_2.get_v3(), tr_1)){
+    if(is_point_in_triangle_2D(tr_2.get_v1(), tr_1) 
+    || is_point_in_triangle_2D(tr_2.get_v2(), tr_1) 
+    || is_point_in_triangle_2D(tr_2.get_v3(), tr_1)){
         return true;
     }
 
     
 
-    else if(is_point_in_triangle(tr_1.get_v1(), tr_2) 
-    || is_point_in_triangle(tr_1.get_v2(), tr_2) 
-    || is_point_in_triangle(tr_1.get_v3(), tr_2)){
+    else if(is_point_in_triangle_2D(tr_1.get_v1(), tr_2) 
+    || is_point_in_triangle_2D(tr_1.get_v2(), tr_2) 
+    || is_point_in_triangle_2D(tr_1.get_v3(), tr_2)){
         return true;
     }
 

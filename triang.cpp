@@ -1,15 +1,19 @@
-#include <vector>
+#include <iostream>
+#include "lib/intersection.hpp"
 #include "lib/geom.hpp"
 
 using T = double;
 
 int main(){
-    int n = 2;
     
-    geom::triangle<T> tr({3, 4, 0}, {-4, 0, 0}, {2, -3, 0});
+    geom::line_segment<T> seg1({0, 0, 0}, {1, 1, 0});
+    geom::line_segment<T> seg2({3, 0, 0}, {1, 3, 0});
 
-    geom::triangle<T> tr2({-1, 0, 0}, {1, 0, 0}, {0, 1, 0});
+    seg1 = {{0, 1, 0}, {1, 0, 0}};
+    seg2 = {{2, -1, 0}, {-1, 2, 0}};
 
-    std::cout << tr.is_intersect_triangles(tr2) << std::endl;
+    std::cout << std::boolalpha << is_intersect_segment(seg2, seg1) << std::endl;
+
+    std::cout << std::boolalpha << is_intersect_segment(seg1, seg2) << std::endl;
 
 }
