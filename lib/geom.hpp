@@ -121,6 +121,12 @@ public:
         return *this;
     }
 
+    line_segment<T>& operator=(const vector<T>* points){
+        point1 = points[0];
+        point2 = points[1];
+        return *this;
+    }
+
     // it is for plane 2D
 
     ~line_segment(){}

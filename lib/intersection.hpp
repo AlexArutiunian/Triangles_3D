@@ -6,10 +6,7 @@ namespace geom{
 
 template <typename T>
 bool is_point_in_interval(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
-    if(((is_in_segment1.get_x() >= point1.get_x() && is_in_segment1.get_x() <= point2.get_x()
-        && is_in_segment1.get_y() >= point1.get_y() && is_in_segment1.get_y() <= point2.get_y()) ||
-        (is_in_segment1.get_x() <= point1.get_x() && is_in_segment1.get_x() >= point2.get_x()
-        && is_in_segment1.get_y() <= point1.get_y() && is_in_segment1.get_y() >= point2.get_y())))
+    if((is_in_segment1 - point1) * (is_in_segment1 - point2) <= 0)
         return true;
     return false;    
 }
@@ -67,7 +64,10 @@ bool is_intersect_segment(const line_segment<T>& segment1, const line_segment<T>
 
         vector<T> is_in_segment1(x, y, 0);
 
-        if(is_point_in_interval(is_in_segment1, point1, point2)){
+       
+
+        if(is_point_in_interval(is_in_segment1, point1, point2) 
+        && is_point_in_interval(is_in_segment1, point__1, point__2)){
             return true;
         }
         else return false;
