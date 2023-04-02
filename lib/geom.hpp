@@ -65,6 +65,15 @@ public:
         return *this;
    
     }
+
+    friend std::ostream& operator<<(std::ostream& os, vector<T> const &A){
+        os << "{" << A.x << "," << A.y << "," << A.z << "}" << std::endl;
+        return os;
+    }
+    friend std::istream& operator >> (std::istream& is, vector<T>& A){
+        is >> A.x >> A.y >> A.z;
+        return is;
+    }
     
     ~vector(){}
 };
@@ -125,6 +134,8 @@ public:
         point2 = points[1];
         return *this;
     }
+
+
 
     // it is for plane 2D
 
