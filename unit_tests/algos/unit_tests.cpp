@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../lib/intersection.hpp"
+#include "../../lib/geom.hpp"
 #include <fstream>
 
 using T = double;

@@ -1,7 +1,9 @@
 #include <iostream>
-#include "lib/matrix.hpp"
 #include "lib/geom.hpp"
-#include "lib/intersection.hpp"
+#include "lib/triangle.hpp"
+
+
+
 
 using T = double;
 

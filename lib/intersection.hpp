@@ -1,6 +1,12 @@
+#pragma once
+
 #include <vector>
 #include <cmath>
 #include "geom.hpp"
+#include "vector_3D.hpp"
+#include "triangle.hpp"
+#include "segment.hpp"
+
 
 namespace geom{
 
@@ -178,7 +184,7 @@ bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
     
     vector<T> normal_2 = B.normal();
 
-    std::cout << normal_2 << std::endl;
+    
 
     std::vector<T> d_1 = distance(A, B);
 
@@ -195,7 +201,6 @@ bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
 
    
 
-    std::cout << normal_2 << std::endl;
 
    
 
@@ -204,8 +209,7 @@ bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
     std::vector<T> t_1 = value_for_equal(A, guid_vector, d_1);
     std::vector<T> t_2 = value_for_equal(B, guid_vector, d_2);
 
-    std::cout << t_1[0] << ' ' << t_1[1] << std::endl;
-    std::cout << t_2[0] << ' ' << t_2[1] << std::endl;
+   
 
     if((t_1[0] <= t_2[0] && t_2[0] <= t_1[1]) || (t_1[0] <= t_2[1] && t_2[1] <= t_1[1])){
         return true;
@@ -236,8 +240,6 @@ std::vector<T> value_for_equal(const triangle<T>& A, const vector<T>& guid_vecto
     T p_3 = guid_vector * A.get_v3();
 
     std::vector<T> t(2);
-
-    std::cout << dis[0] << " " << dis[1] <<  ' ' << dis[2] <<std::endl;
 
     if(dis[0] * dis[2] > 0){
         T temp1 = p_1 + (p_2 - p_1)*(dis[0])/(dis[0] - dis[1]);
