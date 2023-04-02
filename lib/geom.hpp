@@ -2,11 +2,12 @@
 
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 
 namespace geom{
 
-template <typename T> class vector{
+template <class T> class vector{
 private:
     T x;
     T y;
@@ -61,16 +62,6 @@ public:
         return x * rhs.x + y * rhs.y + z * rhs.z;
     }
 
-    std::ofstream& operator << (std::ofstream& os){
-        os << "{" << x << "," << y << "," << z << "}" << std::endl;
-        return os;
-    }
-
-    std::ifstream& operator >> (std::ifstream& is){
-        is >> x >> y >> z;
-        return is;
-    }  
-
     vector<T>& vect_mult(const vector<T>& rhs){
         
         T temp_x = y * rhs.z - z * rhs.y;
@@ -84,18 +75,26 @@ public:
         return *this;
    
     }
+    friend std::ostream& operator<<(std::ostream& os, vector<T> const &A){
+        os << "{" << A.x << "," << A.y << "," << A.z << "}" << std::endl;
+        return os;
+    }
+    friend std::istream& operator >> (std::istream& is, vector<T>& A){
+        is >> A.x >> A.y >> A.z;
+        return is;
+    }
     
     ~vector(){};
 };
 
-template <typename T>
+template <class T>
 vector<T> operator-(const vector<T>& vect1, const vector<T>& vect2){
     vector<T> temp = vect1;
     temp -= vect2;
     return temp;
 }
 
-template <typename T>
+template <class T>
 vector<T> operator+(const vector<T>& vect1, const vector<T>& vect2){
     vector<T> temp = vect1;
     temp += vect2;
@@ -127,17 +126,6 @@ public:
         return point2;
     }
 
-    std::ofstream& operator << (std::ofstream& os){
-        os << point1 << point2 << std::endl;
-        return os;
-    }
-
-    std::ifstream& operator >>(std::ifstream& is){
-        is >> point1 >>point2;
-        return is;
-    } 
-
-
     line_segment(const T* p1, const T* p2){
        
         point1.x = p1[0];
@@ -160,14 +148,21 @@ public:
         point1 = points[0];
         point2 = points[1];
         return *this;
+
     }
 
-    // it is for plane 2D
+    friend std::ostream& operator << (std::ostream& os, line_segment<T> const &A){
+        os << A.point1 << A.point2 << std::endl;
+        return os;
+    }
+
+    friend std::istream& operator >>( std::istream& is, line_segment<T> &A){
+        is >> A.point1 >> A.point2;
+        return is;
+    }
 
     ~line_segment(){}
 };
-
-
 
 
 template <typename T> class triangle{
@@ -196,16 +191,16 @@ public:
         return *this;
     }
 
-    std::ofstream& operator << (std::ofstream& os){
-        os << "Point 1:" << vert1 << std::endl;
-        os << "Point 2:" << vert2 << std::endl;
-        os << "Point 3:" << vert3 << std::endl;
+    friend std::ostream& operator << (std::ostream& os, triangle<T> const &A){
+        os << "Point 1:" << A.vert1 << std::endl;
+        os << "Point 2:" << A.vert2 << std::endl;
+        os << "Point 3:" << A.vert3 << std::endl;
 
         return os;
     }
 
-    std::ifstream& operator >> (std::ifstream& is){
-        is >> vert1 >> vert2 >> vert3;
+    friend std::istream& operator >> (std::istream& is, triangle<T>  &A){
+        is >> A.vert1 >> A.vert2 >> A.vert3;
         return is;
     }
 
