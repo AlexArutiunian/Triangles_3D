@@ -39,6 +39,14 @@ public:
 
         return *this;
     }
+
+    vector<T>& operator+=(const vector<T>& rhs){
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+
+        return *this;
+    }
      
     vector<T>& operator=(T* array){
         x = array[0];
@@ -51,6 +59,16 @@ public:
     T operator*(const vector<T>& rhs){
         
         return x * rhs.x + y * rhs.y + z * rhs.z;
+    }
+
+    std::ofstream& operator << (std::ofstream& os){
+        os << "{" << x << "," << y << "," << z << "}" << std::endl;
+        return os;
+    }
+
+    std::ifstream& operator >> (std::ifstream& is){
+        is >> x >> y >> z;
+        return is;
     }  
 
     vector<T>& vect_mult(const vector<T>& rhs){
@@ -67,13 +85,20 @@ public:
    
     }
     
-    ~vector(){}
+    ~vector(){};
 };
 
 template <typename T>
 vector<T> operator-(const vector<T>& vect1, const vector<T>& vect2){
     vector<T> temp = vect1;
     temp -= vect2;
+    return temp;
+}
+
+template <typename T>
+vector<T> operator+(const vector<T>& vect1, const vector<T>& vect2){
+    vector<T> temp = vect1;
+    temp += vect2;
     return temp;
 }
 
@@ -101,6 +126,16 @@ public:
     vector<T>& get_point2(){
         return point2;
     }
+
+    std::ofstream& operator << (std::ofstream& os){
+        os << point1 << point2 << std::endl;
+        return os;
+    }
+
+    std::ifstream& operator >>(std::ifstream& is){
+        is >> point1 >>point2;
+        return is;
+    } 
 
 
     line_segment(const T* p1, const T* p2){
@@ -161,6 +196,20 @@ public:
         return *this;
     }
 
+    std::ofstream& operator << (std::ofstream& os){
+        os << "Point 1:" << vert1 << std::endl;
+        os << "Point 2:" << vert2 << std::endl;
+        os << "Point 3:" << vert3 << std::endl;
+
+        return os;
+    }
+
+    std::ifstream& operator >> (std::ifstream& is){
+        is >> vert1 >> vert2 >> vert3;
+        return is;
+    }
+
+
     vector<T>& get_v1(){
         return vert1;
     }
@@ -191,7 +240,5 @@ public:
     }
     
     ~triangle(){}
-};
-
-     
+};     
 } // namespace end
