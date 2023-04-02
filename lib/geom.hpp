@@ -152,7 +152,7 @@ public:
     }
 
     friend std::ostream& operator << (std::ostream& os, line_segment<T> const &A){
-        os << A.point1 << A.point2 << std::endl;
+        os << A.point1 << A.point2;
         return os;
     }
 
@@ -192,9 +192,9 @@ public:
     }
 
     friend std::ostream& operator << (std::ostream& os, triangle<T> const &A){
-        os << "Point 1:" << A.vert1 << std::endl;
-        os << "Point 2:" << A.vert2 << std::endl;
-        os << "Point 3:" << A.vert3 << std::endl;
+        os << "Point 1:" << A.vert1;
+        os << "Point 2:" << A.vert2;
+        os << "Point 3:" << A.vert3;
 
         return os;
     }
