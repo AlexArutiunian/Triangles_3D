@@ -48,8 +48,7 @@ public:
 
     }
 
-    T operator*(const vector<T>& rhs){
-        
+    T operator*(const vector<T>& rhs) const{
         return x * rhs.x + y * rhs.y + z * rhs.z;
     }  
 
@@ -185,10 +184,12 @@ public:
         return vert3;
     }
 
-    vector<T> normal(){
-        vector<T> normal = (vert2-vert1).vect_mult(vert3 - vert1);//N = (V2-V1) x (V3-V1)
+    vector<T> normal() const{
+        vector<T> normal = (vert2 - vert1).vect_mult(vert3 - vert1);//N = (V2-V1) x (V3-V1)
         return normal;
     }
+
+    
     
     ~triangle(){}
 };

@@ -156,7 +156,57 @@ bool is_intersect_triangles_2D(const triangle<T>& tr_1, const triangle<T>& tr_2)
 
 
 template <typename T>
-std::vector<T> search_distance(triangle<T>& A,  std::vector<T>& normal, const T dis){
+T dist_between_point_and_triangle(const triangle<T>& A, const vector<T>& point){
+    vector<T> normal_ = A.normal();
+    T dis_ = -1 * (normal_ * A.get_v1());                      
+    T d = normal_ * point + dis_;
+    return d; 
+}
+
+template <typename T>
+std::vector<T> distance(const triangle<T>& A, const triangle<T>& B){
+    std::vector<T> d(3);
+    d[0] = dist_between_point_and_triangle(B, A.get_v1());
+    d[1] = dist_between_point_and_triangle(B, A.get_v2());
+    d[2] = dist_between_point_and_triangle(B, A.get_v3());
+    return d;
+}
+
+
+template <typename T>
+bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
+    
+    vector<T> normal_2 = B.normal();
+
+    std::vector<T> d_1 = distance(A, B);
+    if(d_1[0] == 0 && d_1[1] == 0 && d_1[2] == 0){
+        return is_intersect_triangles_2D(A, B);
+    }
+
+    if((d_1[0] * d_1[1] > 0) && (d_1[1] * d_1[2] > 0)){
+        return false;
+    }
+
+    vector<T> normal_1 = A.normal();
+
+    std::vector<T> d_2 = distance(B, A);
+
+    vector<T> guid_vector = normal_1.vect_mult(normal_2);  //D = N1 x N2
+
+    std::vector<T> t_1 = value_for_equal(A, guid_vector, d_1);
+    std::vector<T> t_2 = value_for_equal(B, guid_vector, d_2);
+
+    if((t_1[0] < t_2[0] && t_2[0] < t_1[1]) || (t_1[0] < t_2[1] && t_2[1] < t_1[1])){
+        return true;
+    }
+    
+    return false;  
+}
+
+
+
+template <typename T>
+std::vector<T> search_distance(const triangle<T>& A,  const std::vector<T>& normal, const T& dis){
     std::vector<T> d(3);
 
     d[0] = normal * A.get_v1() + dis;             //d_V1_i = N2*V1_i + d_V2
@@ -167,7 +217,7 @@ std::vector<T> search_distance(triangle<T>& A,  std::vector<T>& normal, const T 
 }
 
 template <typename T>
-std::vector<T> value_for_equal(triangle<T>& A, vector<T>& guid_vector, std::vector<T>& dis){
+std::vector<T> value_for_equal(const triangle<T>& A, const vector<T>& guid_vector, const std::vector<T>& dis){
     T p_1 = guid_vector * A.get_v1();
     T p_2 = guid_vector * A.get_v2();
     T p_3 = guid_vector * A.get_v3();
@@ -175,16 +225,16 @@ std::vector<T> value_for_equal(triangle<T>& A, vector<T>& guid_vector, std::vect
     std::vector<T> t(2);
 
     if(dis[0] * dis[2] > 0){
-        t[1] = p_1 + (p_2 - p_1)*(dis[0])/(dis[0] - dis[1]);
-        t[2] = p_3 + (p_2 - p_3)*(dis[2])/(dis[2] - dis[1]);
+        t[0] = p_1 + (p_2 - p_1)*(dis[0])/(dis[0] - dis[1]);
+        t[1] = p_3 + (p_2 - p_3)*(dis[2])/(dis[2] - dis[1]);
     }
     if(dis[1] * dis[2] > 0){
-        t[1] = p_2 + (p_1 - p_2)*(dis[1])/(dis[1] - dis[0]);
-        t[2] = p_3 + (p_1 - p_3)*(dis[2])/(dis[2] - dis[0]);
+        t[0] = p_2 + (p_1 - p_2)*(dis[1])/(dis[1] - dis[0]);
+        t[1] = p_3 + (p_1 - p_3)*(dis[2])/(dis[2] - dis[0]);
     }
     if(dis[0] * dis[1] > 0){
-        t[1] = p_1 + (p_3 - p_1)*(dis[0])/(dis[0] - dis[2]);
-        t[2] = p_2 + (p_3 - p_2)*(dis[1])/(dis[1] - dis[2]);
+        t[0] = p_1 + (p_3 - p_1)*(dis[0])/(dis[0] - dis[2]);
+        t[1] = p_2 + (p_3 - p_2)*(dis[1])/(dis[1] - dis[2]);
     }
     return t;
 }
