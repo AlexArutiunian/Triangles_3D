@@ -6,8 +6,8 @@ using T = double;
 
 
 TEST(Intersect2D, segments){
-    geom::line_segment<T> seg1({0, 0, 0}, {1, 1, 0});
-    geom::line_segment<T> seg2({3, 0, 0}, {1, 3, 0});
+    geom::segment<T> seg1({0, 0, 0}, {1, 1, 0});
+    geom::segment<T> seg2({3, 0, 0}, {1, 3, 0});
 
     EXPECT_FALSE(is_intersect_segment(seg1, seg2));
     EXPECT_FALSE(is_intersect_segment(seg2, seg1));
@@ -21,8 +21,8 @@ TEST(Intersect2D, segments){
 
 TEST(Intersect, segments_spec_cases){
     // for the case of || lines
-    geom::line_segment<T> seg1({0, 1, 0}, {1, 0, 0});
-    geom::line_segment<T> seg2({3, 1, 0}, {2, 1, 0});
+    geom::segment<T> seg1({0, 1, 0}, {1, 0, 0});
+    geom::segment<T> seg2({3, 1, 0}, {2, 1, 0});
     EXPECT_FALSE(geom::is_intersect_segment(seg1, seg2));
     EXPECT_FALSE(geom::is_intersect_segment(seg2, seg1));
 

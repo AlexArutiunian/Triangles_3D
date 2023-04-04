@@ -6,8 +6,8 @@ using T = double;
 
 int main(){
     
-    geom::line_segment<T> seg1({0, 0, 0}, {1, 1, 0});
-    geom::line_segment<T> seg2({3, 0, 0}, {1, 3, 0});
+    geom::segment<T> seg1({0, 0, 0}, {1, 1, 0});
+    geom::segment<T> seg2({3, 0, 0}, {1, 3, 0});
 
     seg1 = {{0, 1, 0}, {1, 0, 0}};
     seg2 = {{2, -1, 0}, {-1, 2, 0}};

@@ -63,8 +63,6 @@ public:
         vector<T> normal = (vert2 - vert1).vect_mult(vert3 - vert1);//N = (V2-V1) x (V3-V1)
         return normal;
     }
-
-    
     
     ~triangle(){}
 };

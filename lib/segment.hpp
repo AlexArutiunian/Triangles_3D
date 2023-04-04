@@ -5,18 +5,13 @@
 #include "geom.hpp"
 #include "vector_3D.hpp"
 
-
-
-
-// PLIZ RENAME line_segment to segment
-
 namespace geom{
-template <typename T> class line_segment{
+template <typename T> class segment{
 private:
     vector<T> point1;
     vector<T> point2;
 public:
-    line_segment(const vector<T>& p1, const vector<T>& p2):
+    segment(const vector<T>& p1, const vector<T>& p2):
     point1(p1), point2(p2){
         
     }
@@ -36,7 +31,7 @@ public:
     }
 
 
-    line_segment(const T* p1, const T* p2){
+    segment(const T* p1, const T* p2){
        
         point1.x = p1[0];
         point1.y = p1[1];
@@ -48,23 +43,21 @@ public:
 
     }
 
-    line_segment<T>& operator=(const line_segment<T>& rhs){
+    segment<T>& operator=(const segment<T>& rhs){
         point1 = rhs.point1;
         point2 = rhs.point2;
         return *this;
     }
 
-    line_segment<T>& operator=(const vector<T>* points){
+    segment<T>& operator=(const vector<T>* points){
         point1 = points[0];
         point2 = points[1];
         return *this;
     }
 
-
-
     // it is for plane 2D
 
-    ~line_segment(){}
+    ~segment(){}
 };
 
 }
