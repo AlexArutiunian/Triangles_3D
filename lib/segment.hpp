@@ -55,7 +55,15 @@ public:
         return *this;
     }
 
-    // it is for plane 2D
+    friend std::ostream& operator << (std::ostream& os, segment<T> const &A){
+        os << "{" <<A.point1 << " , " << A.point2 << "}" << std::endl;
+        return os;
+    }
+
+    friend std::istream& operator >> (std::istream& is, segment<T> &A){
+        is >> A.point1 >> A.point2;
+        return is;
+    }
 
     ~segment(){}
 };
