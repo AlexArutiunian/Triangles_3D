@@ -23,13 +23,13 @@ public:
         return *this;
     } 
 
-    T get_x(){
+    T get_x() const{
         return x;
     }
-    T get_y(){
+    T get_y() const{
         return y;
     }
-    T get_z(){
+    T get_z() const{
         return z;
     }
     
@@ -41,7 +41,7 @@ public:
         return *this;
     }
 
-    vector<T>& operator-=(const vector<T>& rhs){
+    vector<T>& operator+=(const vector<T>& rhs){
         x += rhs.x;
         y += rhs.y;
         z += rhs.z;

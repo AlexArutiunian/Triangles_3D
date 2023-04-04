@@ -8,7 +8,36 @@
 #include "segment.hpp"
 
 namespace geom{
-    
+
+template <typename T>
+bool check_oktan(const triangle<T>& A, const triangle<T>& B){
+    if(sing_check(A, &vector<T>::get_x) * sing_check(B, &vector<T>::get_x) == -1){
+        return true;
+    } 
+    else if(sing_check(A, &vector<T>::get_y) * sing_check(B, &vector<T>::get_y) == -1){
+        return true;
+    }
+    else if(sing_check(A, &vector<T>::get_z) * sing_check(B, &vector<T>::get_z) == -1){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+template <typename T>
+char sing_check(const triangle<T>& A, T(vector<T>::*get_par)() const){
+    if((A.get_v1().*get_par)() < 0 && (A.get_v2().*get_par)() < 0 && (A.get_v3().*get_par)() < 0){
+        return -1;
+    }
+    else if((A.get_v1().*get_par)() > 0 && (A.get_v2().*get_par)() > 0 && (A.get_v3().*get_par)() > 0){
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
 template <typename T>
 bool is_point_in_segment(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
     if((is_in_segment1 - point1) * (is_in_segment1 - point2) <= 0)
@@ -172,9 +201,11 @@ std::vector<T> distance(const triangle<T>& A, const triangle<T>& B){
 
 template <typename T>
 bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
-    
-    vector<T> normal_2 = B.normal();
+    if(check_oktan(A, B)){
+        return false;
+    }
 
+    vector<T> normal_2 = B.normal();
     std::vector<T> d_1 = distance(A, B);
 
     std::vector<T> d_2 = distance(B, A);
@@ -259,34 +290,5 @@ std::vector<T> value_for_equal(const triangle<T>& A, const vector<T>& guid_vecto
         }
     }
     return t;
-}
-
-template <typename T>
-bool tree_perpendiculars(triangle<T> &A, triangle<T> &B){
-
-    vector<T> normal_2 = B.normal();
-
-    T dis_1 = -1 * (normal_2 * B.get_v1());                   //d_V2 = -1 * (N2 * V2_1)    
-    std::vector<T> d_1 = search_distance(A, normal_2, dis_1);// Далее создается полная абстракция для упрощения работы используется класс вектор 
-
-    if((d_1[0] * d_1[1] > 0) && (d_1[1] * d_1[2] > 0)){
-        return false;
-    }
-
-    vector<T> normal_1 = A.normal();
-
-    T dis_2 = -1 * (normal_1 * A.get_v1());
-    std::vector<T> d_2 = search_distance(B, normal_1, dis_2);
-
-    vector<T> guid_vector = normal_1.vect_mult(normal_2);  //D = N1 x N2
-
-    std::vector<T> t_1 = value_for_equa(A, guid_vector, d_1);
-    std::vector<T> t_2 = value_for_equa(B, guid_vector, d_2);
-
-    if((t_1[0] <= t_2[0] && t_2[0] <= t_1[1]) || (t_1[0] <= t_2[1] && t_2[1] <= t_1[1])){
-        return true;
-    }
-    
-    return false;
 }
 }// namespace end
