@@ -28,7 +28,7 @@ P.S (4 3 also is right)
 
 ## • About algorithm
 
-The Möller algorithm is used. The theory is explaned in [this article](http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf). <br>
+[The Möller algorithm](http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf) is used. The theory is translated on russian and explaned in [this readme](https://github.com/AlexArutiunian/Triangle_3D/blob/main/lib/README.md). <br>
 
 There are some optimisations in the project. 
 
