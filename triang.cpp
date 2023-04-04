@@ -1,11 +1,13 @@
+#include <iostream>
 #include "lib/intersection.hpp"
 #include "lib/geom.hpp"
 
 using T = double;
 
 int main(){
-    geom::triangle<T> tr1({3, 0, 0}, {0, 3, 0}, {0, 0, 3});
-    geom::triangle<T> tr2({3, 0, 0}, {0, 3, 0}, {0, 0, 1});
+    
+    geom::segment<T> seg1({0, 0, 0}, {1, 1, 0});
+    geom::segment<T> seg2({3, 0, 0}, {1, 3, 0});
 
-    std::cout << tr1;
+    std::cout << seg1 << "\n" << seg2 << std::endl;
 }
