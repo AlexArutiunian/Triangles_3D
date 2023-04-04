@@ -26,15 +26,15 @@ Or output:
 ```
 P.S (4 3 also is right)
 
-## About algorithm
+## • About algorithm
 
 The Möller algorithm is used. The theory is explaned in [this article](http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf). <br>
 
 There are some optimisations in the project. 
 
-## How to make?
+## • How to make?
 
-### On Linux:
+### - On Linux:
 
 with script from the repo
 ```bash
@@ -48,13 +48,13 @@ cmake ..
 cmake --build .
 ```
 
-## How to test?
+## • How to test?
 There are two types of tests in directory [unit_tests](https://github.com/AlexArutiunian/Triangle_3D/tree/main/unit_tests).<br>
 1) [algos](https://github.com/AlexArutiunian/Triangle_3D/tree/main/unit_tests/algos) - for testing function in [intersection.hpp](https://github.com/AlexArutiunian/Triangle_3D/blob/main/lib/intersection.hpp) <br>(as example, for testing The Möller algorithm)
 
 2) [interface](https://github.com/AlexArutiunian/Triangle_3D/tree/main/unit_tests/interface) - for testing of containers like vector_3D, line_segment and so on.
 
-### To make tests on Linux:
+### - To make tests on Linux:
 
 ```bash
 bash build.sh
