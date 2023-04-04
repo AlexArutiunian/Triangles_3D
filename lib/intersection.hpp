@@ -10,14 +10,14 @@
 namespace geom{
     
 template <typename T>
-bool is_point_in_segment(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
+bool is_point_in_segment_2d(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
     if((is_in_segment1 - point1) * (is_in_segment1 - point2) <= 0)
         return true;
     return false;    
 }
 
 template <typename T>
-bool is_intersect_segment(const segment<T>& segment1, const segment<T>& segment2){
+bool is_intersect_segment_2d(const segment<T>& segment1, const segment<T>& segment2){
     vector<T> point__1 = segment1.get_point1();
     vector<T> point__2 = segment1.get_point2();
 
@@ -39,10 +39,10 @@ bool is_intersect_segment(const segment<T>& segment1, const segment<T>& segment2
 
     if((check1 * check2) == 0){
         
-        if(is_point_in_segment(point__1, point1, point2) || 
-        is_point_in_segment(point__2, point1, point2) || 
-        is_point_in_segment(point1, point__1, point__2) ||
-        is_point_in_segment(point2, point__1, point__2)) return true;
+        if(is_point_in_segment_2d(point__1, point1, point2) || 
+        is_point_in_segment_2d(point__2, point1, point2) || 
+        is_point_in_segment_2d(point1, point__1, point__2) ||
+        is_point_in_segment_2d(point2, point__1, point__2)) return true;
         else return false;
     }
     
@@ -74,8 +74,8 @@ bool is_intersect_segment(const segment<T>& segment1, const segment<T>& segment2
 
        
 
-        if(is_point_in_segment(is_in_segment1, point1, point2) 
-        && is_point_in_segment(is_in_segment1, point__1, point__2)){
+        if(is_point_in_segment_2d(is_in_segment1, point1, point2) 
+        && is_point_in_segment_2d(is_in_segment1, point__1, point__2)){
             return true;
         }
         else return false;
@@ -129,7 +129,7 @@ bool is_intersect_triangles_2D(const triangle<T>& tr_1, const triangle<T>& tr_2)
 
     for(int i = 0; i != 3; ++i){
         for(int j = 0; j != 3; ++j){
-            if(is_intersect_segment(sides_tr1[i], sides_tr2[j])){ 
+            if(is_intersect_segment_2d(sides_tr1[i], sides_tr2[j])){ 
                 
                 return true;
             }    
@@ -171,59 +171,42 @@ std::vector<T> distance(const triangle<T>& A, const triangle<T>& B){
 }
 
 template <typename T>
-bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
-    
-    vector<T> normal_2 = B.normal();
-
+bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){ 
     std::vector<T> d_1 = distance(A, B);
-
     std::vector<T> d_2 = distance(B, A);
-    vector<T> normal_1 = A.normal();
 
     if(d_1[0] == 0 && d_1[1] == 0 && d_1[2] == 0){
         return is_intersect_triangles_2D(A, B);
     }
 
-    if(((d_1[0] * d_1[1] > 0) && (d_1[1] * d_1[2] > 0)) || ((d_2[0] * d_2[1] > 0) && (d_2[1] * d_2[2] > 0))){
+    if(((d_1[0] * d_1[1] > 0) && (d_1[1] * d_1[2] > 0))
+    || ((d_2[0] * d_2[1] > 0) && (d_2[1] * d_2[2] > 0))){
         return false;
     }
+    
+    vector<T> normal_2 = B.normal();
+    vector<T> normal_1 = A.normal();
+    vector<T> direct_vector = normal_1.vect_mult(normal_2);  //D = N1 x N2
 
-    vector<T> guid_vector = normal_1.vect_mult(normal_2);  //D = N1 x N2
-
-    std::vector<T> t_1 = value_for_equal(A, guid_vector, d_1);
-    std::vector<T> t_2 = value_for_equal(B, guid_vector, d_2);
+    std::vector<T> t_1 = value_for_equal(A, direct_vector, d_1);
+    std::vector<T> t_2 = value_for_equal(B, direct_vector, d_2);
 
     if((t_1[0] <= t_2[0] && t_2[0] <= t_1[1]) || (t_1[0] <= t_2[1] && t_2[1] <= t_1[1])){
         return true;
     }
-    
     return false;  
 }
 
-
-
 template <typename T>
-std::vector<T> search_distance(const triangle<T>& A,  const std::vector<T>& normal, const T& dis){
-    std::vector<T> d(3);
-
-    d[0] = normal * A.get_v1() + dis;             //d_V1_i = N2*V1_i + d_V2
-    d[1] = normal * A.get_v2() + dis; 
-    d[2] = normal * A.get_v3() + dis;
-
-    return d; 
-}
-
-template <typename T>
-std::vector<T> value_for_equal(const triangle<T>& A, const vector<T>& guid_vector, const std::vector<T>& dis){
-    T p_1 = guid_vector * A.get_v1();
-    T p_2 = guid_vector * A.get_v2();
-    T p_3 = guid_vector * A.get_v3();
+std::vector<T> value_for_equal(const triangle<T>& A, const vector<T>& direct_vector, const std::vector<T>& dis){
+    T p_1 = direct_vector * A.get_v1();
+    T p_2 = direct_vector * A.get_v2();
+    T p_3 = direct_vector * A.get_v3();
 
     std::vector<T> t(2);
 
     if(dis[0] * dis[2] > 0){
         T temp1 = p_1 + (p_2 - p_1)*(dis[0])/(dis[0] - dis[1]);
-        
         T temp2 = p_3 + (p_2 - p_3)*(dis[2])/(dis[2] - dis[1]);
         if(temp1 < temp2){
             t[0] = temp1;
@@ -261,32 +244,4 @@ std::vector<T> value_for_equal(const triangle<T>& A, const vector<T>& guid_vecto
     return t;
 }
 
-template <typename T>
-bool tree_perpendiculars(triangle<T> &A, triangle<T> &B){
-
-    vector<T> normal_2 = B.normal();
-
-    T dis_1 = -1 * (normal_2 * B.get_v1());                   //d_V2 = -1 * (N2 * V2_1)    
-    std::vector<T> d_1 = search_distance(A, normal_2, dis_1);// Далее создается полная абстракция для упрощения работы используется класс вектор 
-
-    if((d_1[0] * d_1[1] > 0) && (d_1[1] * d_1[2] > 0)){
-        return false;
-    }
-
-    vector<T> normal_1 = A.normal();
-
-    T dis_2 = -1 * (normal_1 * A.get_v1());
-    std::vector<T> d_2 = search_distance(B, normal_1, dis_2);
-
-    vector<T> guid_vector = normal_1.vect_mult(normal_2);  //D = N1 x N2
-
-    std::vector<T> t_1 = value_for_equa(A, guid_vector, d_1);
-    std::vector<T> t_2 = value_for_equa(B, guid_vector, d_2);
-
-    if((t_1[0] <= t_2[0] && t_2[0] <= t_1[1]) || (t_1[0] <= t_2[1] && t_2[1] <= t_1[1])){
-        return true;
-    }
-    
-    return false;
-}
 }// namespace end

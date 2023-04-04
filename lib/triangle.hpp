@@ -6,8 +6,6 @@
 #include "vector_3D.hpp"
 #include "segment.hpp"
 
-
-
 namespace geom{
 template <typename T> class triangle{
 private:

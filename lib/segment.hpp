@@ -12,23 +12,13 @@ private:
     vector<T> point2;
 public:
     segment(const vector<T>& p1, const vector<T>& p2):
-    point1(p1), point2(p2){
-        
-    }
+    point1(p1), point2(p2) {}
 
-    const vector<T>& get_point1() const{
-        return point1;
-    }
-    vector<T>& get_point1(){
-        return point1;
-    }
+    const vector<T>& get_point1() const{ return point1; }
+    vector<T>& get_point1(){ return point1; }
 
-    const vector<T>& get_point2() const{
-        return point2;
-    }
-    vector<T>& get_point2(){
-        return point2;
-    }
+    const vector<T>& get_point2() const{ return point2; }
+    vector<T>& get_point2(){ return point2; }
 
 
     segment(const T* p1, const T* p2){

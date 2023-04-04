@@ -3,8 +3,6 @@
 #include <vector>
 #include <cmath>
 
-// PLIZ RENAME class vector to vector_3D
-
 namespace geom{
 
 template <typename T> class vector{
