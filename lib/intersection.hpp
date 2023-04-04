@@ -7,9 +7,8 @@
 #include "triangle.hpp"
 #include "segment.hpp"
 
-
 namespace geom{
-
+    
 template <typename T>
 bool is_point_in_segment(vector<T>& is_in_segment1, vector<T>& point1, vector<T>& point2){
     if((is_in_segment1 - point1) * (is_in_segment1 - point2) <= 0)
@@ -18,7 +17,7 @@ bool is_point_in_segment(vector<T>& is_in_segment1, vector<T>& point1, vector<T>
 }
 
 template <typename T>
-bool is_intersect_segment(const line_segment<T>& segment1, const line_segment<T>& segment2){
+bool is_intersect_segment(const segment<T>& segment1, const segment<T>& segment2){
     vector<T> point__1 = segment1.get_point1();
     vector<T> point__2 = segment1.get_point2();
 
@@ -114,20 +113,19 @@ bool is_point_in_triangle_2D(const vector<T>& point_, const triangle<T>& triang)
 
 }
 
-
 template <typename T>
 bool is_intersect_triangles_2D(const triangle<T>& tr_1, const triangle<T>& tr_2){
    
-    line_segment<T> side_11(tr_1.get_v1(), tr_1.get_v2());
-    line_segment<T> side_12(tr_1.get_v2(), tr_1.get_v3());
-    line_segment<T> side_13(tr_1.get_v1(), tr_1.get_v3());
+    segment<T> side_11(tr_1.get_v1(), tr_1.get_v2());
+    segment<T> side_12(tr_1.get_v2(), tr_1.get_v3());
+    segment<T> side_13(tr_1.get_v1(), tr_1.get_v3());
     
-    line_segment<T> side_21(tr_2.get_v1(), tr_2.get_v2());
-    line_segment<T> side_22(tr_2.get_v2(), tr_2.get_v3());
-    line_segment<T> side_23(tr_2.get_v1(), tr_2.get_v3());
+    segment<T> side_21(tr_2.get_v1(), tr_2.get_v2());
+    segment<T> side_22(tr_2.get_v2(), tr_2.get_v3());
+    segment<T> side_23(tr_2.get_v1(), tr_2.get_v3());
 
-    std::vector<line_segment<T>> sides_tr1({side_11, side_12, side_13});
-    std::vector<line_segment<T>> sides_tr2({side_21, side_22, side_23});
+    std::vector<segment<T>> sides_tr1({side_11, side_12, side_13});
+    std::vector<segment<T>> sides_tr2({side_21, side_22, side_23});
 
     for(int i = 0; i != 3; ++i){
         for(int j = 0; j != 3; ++j){
@@ -140,14 +138,11 @@ bool is_intersect_triangles_2D(const triangle<T>& tr_1, const triangle<T>& tr_2)
 
     }
 
-    
     if(is_point_in_triangle_2D(tr_2.get_v1(), tr_1) 
     || is_point_in_triangle_2D(tr_2.get_v2(), tr_1) 
     || is_point_in_triangle_2D(tr_2.get_v3(), tr_1)){
         return true;
     }
-
-    
 
     else if(is_point_in_triangle_2D(tr_1.get_v1(), tr_2) 
     || is_point_in_triangle_2D(tr_1.get_v2(), tr_2) 
@@ -155,11 +150,8 @@ bool is_intersect_triangles_2D(const triangle<T>& tr_1, const triangle<T>& tr_2)
         return true;
     }
 
-    return false;
-    
-    
+    return false;    
 }
-
 
 template <typename T>
 T dist_between_point_and_triangle(const triangle<T>& A, const vector<T>& point){
@@ -178,13 +170,10 @@ std::vector<T> distance(const triangle<T>& A, const triangle<T>& B){
     return d;
 }
 
-
 template <typename T>
 bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
     
     vector<T> normal_2 = B.normal();
-
-    
 
     std::vector<T> d_1 = distance(A, B);
 
@@ -199,17 +188,10 @@ bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
         return false;
     }
 
-   
-
-
-   
-
     vector<T> guid_vector = normal_1.vect_mult(normal_2);  //D = N1 x N2
 
     std::vector<T> t_1 = value_for_equal(A, guid_vector, d_1);
     std::vector<T> t_2 = value_for_equal(B, guid_vector, d_2);
-
-   
 
     if((t_1[0] <= t_2[0] && t_2[0] <= t_1[1]) || (t_1[0] <= t_2[1] && t_2[1] <= t_1[1])){
         return true;
@@ -223,8 +205,6 @@ bool is_intersect_triangles_3D(const triangle<T>& A, const triangle<T>& B){
 template <typename T>
 std::vector<T> search_distance(const triangle<T>& A,  const std::vector<T>& normal, const T& dis){
     std::vector<T> d(3);
-    
-    
 
     d[0] = normal * A.get_v1() + dis;             //d_V1_i = N2*V1_i + d_V2
     d[1] = normal * A.get_v2() + dis; 

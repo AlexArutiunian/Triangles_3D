@@ -40,7 +40,15 @@ public:
 
         return *this;
     }
-     
+
+    vector<T>& operator-=(const vector<T>& rhs){
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+
+        return *this;
+    }
+
     vector<T>& operator=(T* array){
         x = array[0];
         y = array[1];
@@ -68,7 +76,7 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, vector<T> const &A){
-        os << "{" << A.x << "," << A.y << "," << A.z << "}" << std::endl;
+        os << "(" << A.x << "," << A.y << "," << A.z << ")";
         return os;
     }
     friend std::istream& operator >> (std::istream& is, vector<T>& A){
@@ -83,6 +91,13 @@ template <typename T>
 vector<T> operator-(const vector<T>& vect1, const vector<T>& vect2){
     vector<T> temp = vect1;
     temp -= vect2;
+    return temp;
+}
+
+template <typename T>
+vector<T> operator+(const vector<T>& vect1, const vector<T>& vect2){
+    vector<T> temp = vect1;
+    temp += vect2;
     return temp;
 }
 }

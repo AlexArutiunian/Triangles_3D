@@ -64,7 +64,16 @@ public:
         return normal;
     }
 
-    
+    friend std::ostream& operator << (std::ostream& os, triangle<T> const &A){
+        os << "{" << A.vert1 << " , " << A.vert2 << " , " << A.vert3 << "}";
+
+        return os;
+    }
+
+    friend std::istream& operator >> (std::istream& is, triangle<T>  &A){
+        is >> A.vert1 >> A.vert2 >> A.vert3;
+        return is;
+    }
     
     ~triangle(){}
 };
