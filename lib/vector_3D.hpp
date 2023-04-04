@@ -39,7 +39,7 @@ public:
         return *this;
     }
 
-    vector<T>& operator-=(const vector<T>& rhs){
+    vector<T>& operator+=(const vector<T>& rhs){
         x += rhs.x;
         y += rhs.y;
         z += rhs.z;

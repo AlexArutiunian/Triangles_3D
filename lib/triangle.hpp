@@ -17,6 +17,8 @@ public:
     triangle(const vector<T> vert1, const vector<T> vert2, const vector<T> vert3):
     vert1(vert1), vert2(vert2), vert3(vert3){}
 
+    triangle(): vert1({0, 0, 0}), vert2({0, 0, 0}), vert3({0, 0, 0}){}
+
     triangle<T>& operator=(const triangle<T>& rhs){
         this->vert1 = rhs.vert1;
         this->vert2 = rhs.vert2;
